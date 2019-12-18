@@ -10,6 +10,8 @@ class Component {
 
     _createElement(component = null) {
         component = component || this;
+        component = component.toComponent();
+
         const tree = component.tree();
         const $element = document.createElement(tree.type);
 
@@ -180,6 +182,11 @@ class Component {
     getElement() {
         return this.$element;
     }
+
+    // Used for high-order components
+    toComponent({ props = {}, state = {} }) {
+        return this;
+    } 
     
     tree() {
         return {
