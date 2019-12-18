@@ -22,6 +22,9 @@ class Component {
 
             if (child instanceof Component) {
                 $child = this._createElement(child);
+            } else if (child && child.toComponent) {
+                const childComponent = child.toComponent();
+                $child = this._createElement(childComponent);
             } else if (child !== null) {
                 const text = child.toString();
                 $child = document.createTextNode(text);
@@ -58,6 +61,10 @@ class Component {
                 $element.addEventListener(key, callback);
             }
         }
+    }
+
+    getElement() {
+        return this.$element;
     }
     
     tree() {

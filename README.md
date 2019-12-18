@@ -5,16 +5,7 @@ GOALS:
   
   TREE:
   1. type - name of HTML element (for simplicity now);
-  2. children - other components, texts etc.
-  
-  CHILDREN TYPE:
-  1. Component - HTML element with attrs and listeners;
-  2. function - event listener of parent;
-  3. object (not null) - attrs of parent;
-  4. default (neither null nor undefined) - text content of parent
-  
-  NOTES: 
-  1. Children of node and children of component are different. This allows to use children for business logic;
-
-  DIFFING (currTree and prevTree):
-  1. If types are different then create element and replace with them previous one;
+  2. attrs - attributes of HTML element;
+  3. listeners - event listeners of HTML element;
+  4. children - another components, or component-convertable, or string-convertable
+ 
