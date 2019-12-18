@@ -8,7 +8,8 @@ class Component {
         }
     }
 
-    _createElement(component = this) {
+    _createElement(component = null) {
+        component = component || this;
         const tree = component.tree();
         const $element = document.createElement(tree.type);
 
@@ -61,6 +62,26 @@ class Component {
                 $element.addEventListener(key, callback);
             }
         }
+    }
+
+    _updateElement({ currTree, prevTree, component = null }) {
+        component = component || this;
+        
+        if (currTree.type !== prevTree.type) {
+            const $element = component.$element;
+            const $newElement = this._createElement(component);
+            const $parent = $element.parentNode;
+
+            $parent.replaceChild($newElement, $element);
+        }
+    }
+
+    setState(state) {
+        const prevTree = this.tree();
+        this._state = Object.assign({}, this._state, state);
+        const currTree = this.tree();
+
+        this._updateElement({ currTree, prevTree });
     }
 
     getElement() {

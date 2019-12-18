@@ -8,4 +8,7 @@ GOALS:
   2. attrs - attributes of HTML element;
   3. listeners - event listeners of HTML element;
   4. children - another components, or component-convertable, or string-convertable
+
+  DIFFING:
+  1. If types of trees are different then create new element and replace old one with it;
  
