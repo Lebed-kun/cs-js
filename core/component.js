@@ -57,16 +57,38 @@ class Component {
     _setEventListeners($element, listeners) {
         for (let key in listeners) {
             const listener = listeners[key];
-            
-            if (Array.isArray(listener)) {
-                for (let id in listener) {
-                    const callback = typeof listener[id] === 'function' ? listener[id] : listener[id].toFunction();
-                    $element.addEventListener(key, callback);
-                }
-            } else {
-                const callback = typeof listener === 'function' ? listener : listener.toFunction();
-                $element.addEventListener(key, callback);
+            this._setEventListener($element, key, listener);
+        }
+    }
+
+    _setEventListener($element, name, listener) {
+        if (Array.isArray(listener)) {
+            for (let id in listener) {
+                const callback = typeof listener[id] === 'function' ? listener[id] : listener[id].toFunction();
+                $element.addEventListener(name, callback);
             }
+        } else {
+            const callback = typeof listener === 'function' ? listener : listener.toFunction();
+            $element.addEventListener(name, callback);
+        }
+    }
+
+    _removeEventListeners($element, listeners) {
+        for (let key in listeners) {
+            const listener = listeners[key];
+            this._removeEventListener($element, key, listener);
+        }
+    }
+
+    _removeEventListener($element, name, listener) {
+        if (Array.isArray(listener)) {
+            for (let id in listener) {
+                const callback = typeof listener[id] === 'function' ? listener[id] : listener[id].toFunction();
+                $element.removeEventListener(name, callback);
+            }
+        } else {
+            const callback = typeof listener === 'function' ? listener : listener.toFunction();
+            $element.removeEventListener(name, callback);
         }
     }
 
@@ -105,9 +127,43 @@ class Component {
 
                 if (prevAttr && currAttrs[prevAttr] === undefined) {
                     $element.removeAttribute(prevAttr);
-                } else if (currAttrs[currAttr] !== prevAttrs[currAttr]) {
+                } 
+                
+                if (currAttr && currAttrs[currAttr] !== prevAttrs[currAttr]) {
                     const currValue = currAttrs[currAttr];
                     $element.setAttribute(currAttr, currValue);
+                } 
+            }
+        }
+    }
+
+    _diffEventListeners($element, currListeners, prevListeners) {
+        if (currListeners && !prevListeners) {
+            this._setEventListeners($element, currListeners);
+            return;
+        }
+
+        if (!currListeners && prevListeners) {
+            this._removeEventListeners($element, prevListeners);
+            return;
+        }
+
+        if (currListeners && prevListeners) {
+            const currKeys = Object.keys(currListeners);
+            const prevKeys = Object.keys(prevListeners);
+
+            for (let i = 0; i < currKeys.length || i < prevKeys.length; i++) {
+                const currListener = currKeys[i];
+                const prevListener = prevKeys[i];
+
+                if (prevListener && currListeners[prevListener] === undefined) {
+                    const handler = prevListeners[prevListener];
+                    this._removeEventListener($element, prevListener, handler);
+                } 
+                
+                if (currListener && prevListeners[currListener] === undefined) {
+                    const handler = currListeners[currListener];
+                    this._setEventListener($element, currListener, handler);
                 }
             }
         }
