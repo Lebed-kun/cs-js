@@ -44,6 +44,11 @@ class Block extends Component {
     }
 }
 
+const block = document.createElement('div');
+block.appendChild(document.createTextNode('APP'));
+const link = document.createElement('a');
+link.appendChild(document.createTextNode('Link'));
+
 const app = new Block({
     props : {
         text : 'Hello world!',
@@ -52,4 +57,6 @@ const app = new Block({
     hasElement : true
 });
 const root = document.getElementById('root');
+root.appendChild(block);
 root.appendChild(app.getElement());
+root.appendChild(link);

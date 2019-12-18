@@ -11,4 +11,5 @@ GOALS:
 
   DIFFING:
   1. If types of trees are different then create new element and replace old one with it;
+  2. Diff attributes. Change only attributes which value is changed;
  

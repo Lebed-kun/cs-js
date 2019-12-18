@@ -21,11 +21,11 @@ class Component {
             const child = children[key];
             let $child = null;
 
-            if (child instanceof Component) {
-                $child = this._createElement(child);
-            } else if (child && child.toComponent) {
+            if (child && child.toComponent) {
                 const childComponent = child.toComponent();
                 $child = this._createElement(childComponent);
+            } else if (child instanceof Component) {    
+                $child = this._createElement(child);
             } else if (child !== null) {
                 const text = child.toString();
                 $child = document.createTextNode(text);
@@ -48,6 +48,12 @@ class Component {
         }
     }
 
+    _removeAttributes($element, attrs) {
+        for (let key in attrs) {
+            $element.removeAttribute(key);
+        }
+    }
+
     _setEventListeners($element, listeners) {
         for (let key in listeners) {
             const listener = listeners[key];
@@ -66,13 +72,44 @@ class Component {
 
     _updateElement({ currTree, prevTree, component = null }) {
         component = component || this;
+        const $element = component.$element;
         
         if (currTree.type !== prevTree.type) {
-            const $element = component.$element;
             const $newElement = this._createElement(component);
             const $parent = $element.parentNode;
 
             $parent.replaceChild($newElement, $element);
+        } else {
+            this._diffAttributes($element, currTree.attrs, prevTree.attrs);
+        }
+    }
+
+    _diffAttributes($element, currAttrs, prevAttrs) {
+        if (currAttrs && !prevAttrs) {
+            this._setAttributes($element, currAttrs);
+            return;
+        }
+
+        if (!currAttrs && prevAttrs) {
+            this._removeAttributes($element, prevAttrs);
+            return;
+        }
+        
+        if (currAttrs && prevAttrs) {
+            const currKeys = Object.keys(currAttrs);
+            const prevKeys = Object.keys(prevAttrs);
+
+            for (let i = 0; i < currKeys.length || i < prevKeys.length; i++) {
+                const currAttr = currKeys[i];
+                const prevAttr = prevKeys[i];
+
+                if (prevAttr && currAttrs[prevAttr] === undefined) {
+                    $element.removeAttribute(prevAttr);
+                } else if (currAttrs[currAttr] !== prevAttrs[currAttr]) {
+                    const currValue = currAttrs[currAttr];
+                    $element.setAttribute(currAttr, currValue);
+                }
+            }
         }
     }
 
