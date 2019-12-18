@@ -62,6 +62,9 @@ class App extends Component {
     tree() {
         return {
             type : 'div',
+            attrs : {
+                style : 'border: 2px solid black;'
+            },
             children : [this.getHeading()].concat(this.getLinks())
         }
     }
