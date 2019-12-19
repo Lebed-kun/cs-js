@@ -9,6 +9,12 @@ class TextContent {
         return $element
     }
 
+    _updateElement(currTree, prevTree) {
+        if (currTree !== prevTree) {
+            this.$element = document.createTextNode(currTree);
+        }
+    }
+
     tree() {
         return this._text;
     }
@@ -80,12 +86,12 @@ class Component {
         }
     }
 
-    _updateElement({ currTree, prevTree, component = null }) {
-        component = component || this;
-        const $element = component.$element;
+    // Review of parent
+    _updateElement({ currTree, prevTree }) {
+        const $element = this.$element;
         
         if (currTree.type !== prevTree.type) {
-            const $newElement = this._createElement(component);
+            const $newElement = this._createElement();
             const $parent = $element.parentNode;
 
             $parent.replaceChild($newElement, $element);
