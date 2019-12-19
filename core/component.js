@@ -1,3 +1,19 @@
+class TextContent {
+    constructor(text) {
+        this._text = text;
+    }
+
+    _createElement() {
+        const $element = document.createTextNode(this._text);
+        this.$element = $element;
+        return $element
+    }
+
+    tree() {
+        return this._text;
+    }
+}
+
 class Component {
     constructor({ props = {}, state = {}, hasElement = false }) {
         this._props = props;
@@ -8,11 +24,8 @@ class Component {
         }
     }
 
-    _createElement(component = null) {
-        component = component || this;
-        component = component.toComponent();
-      
-        const tree = component.tree();
+    _createElement() {
+        const tree = this.tree();
         const $element = document.createElement(tree.type);
 
         this._setAttributes($element, tree.attrs);
@@ -25,12 +38,9 @@ class Component {
 
             if (child && child.toComponent) {
                 const childComponent = child.toComponent();
-                $child = this._createElement(childComponent);
-            } else if (child instanceof Component) {    
-                $child = this._createElement(child);
-            } else if (child !== null) {
-                const text = child.toString();
-                $child = document.createTextNode(text);
+                $child = childComponent._createElement();
+            } else if (child instanceof Component || child instanceof TextContent) {    
+                $child = child._createElement();
             }
 
             if ($child) {
@@ -38,7 +48,7 @@ class Component {
             }
         }
 
-        component.$element = $element;
+        this.$element = $element;
       
         return $element;
     }
@@ -83,15 +93,6 @@ class Component {
             this._diffAttributes($element, currTree.attrs, prevTree.attrs);
             this._diffEventListeners($element, currTree.listeners, prevTree.listeners);
             this._diffChildren(currTree.children, prevTree.children);
-        }
-    }
-
-    _diffChildren(currChildren, prevChildren) {
-        const currKeys = Object.keys(currChildren);
-        const prevKeys = Object.keys(prevChildren);
-
-        for (let i = 0; i < currKeys.length || i < prevKeys.length; i++) {
-            
         }
     }
 
@@ -168,11 +169,6 @@ class Component {
     getElement() {
         return this.$element;
     }
-
-    // Used for high-order components
-    toComponent() {
-      return this;
-    } 
     
     tree() {
         return {
