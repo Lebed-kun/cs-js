@@ -87,7 +87,7 @@ class Component {
     }
 
     // Review of parent
-    _updateElement({ currTree, prevTree }) {
+    _updateElement(currTree, prevTree) {
         const $element = this.$element;
         
         if (currTree.type !== prevTree.type) {
@@ -169,7 +169,7 @@ class Component {
         this._state = Object.assign({}, this._state, state);
         const currTree = this.tree();
 
-        this._updateElement({ currTree, prevTree });
+        this._updateElement(currTree, prevTree);
     }
 
     getElement() {
