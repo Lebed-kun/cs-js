@@ -105,6 +105,7 @@ class Component {
             $parent.replaceChild($newElement, $element);
         } else {
             this._diffAttributes($element, currTree.attrs, prevTree.attrs);
+            this._diffEventListeners($element, currTree.listeners, prevTree.listeners);
         }
     }
 
