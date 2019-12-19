@@ -11,7 +11,7 @@ class Component {
     _createElement(component = null) {
         component = component || this;
         component = component.toComponent();
-
+      
         const tree = component.tree();
         const $element = document.createElement(tree.type);
 
@@ -39,7 +39,7 @@ class Component {
         }
 
         component.$element = $element;
-
+      
         return $element;
     }
 
@@ -132,7 +132,7 @@ class Component {
                 } 
                 
                 if (currAttr && currAttrs[currAttr] !== prevAttrs[currAttr]) {
-                    const currValue = currAttrs[currAttr];
+                    const currValue = currAttrs[currAttr].toString();
                     $element.setAttribute(currAttr, currValue);
                 } 
             }
@@ -206,8 +206,8 @@ class Component {
     }
 
     // Used for high-order components
-    toComponent({ props = {}, state = {} }) {
-        return this;
+    toComponent() {
+      return this;
     } 
     
     tree() {

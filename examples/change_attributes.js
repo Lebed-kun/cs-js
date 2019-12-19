@@ -1,5 +1,22 @@
 // success
 
+class CSS {
+    constructor(cssProps) {
+        this._css = cssProps;
+    }
+
+    toString() {
+        let str = '';
+        const css = this._css;
+
+        for (let prop in this._css) {
+            str += `${prop}: ${css[prop].toString()};`
+        }
+
+        return str;
+    }
+}
+
 class Button extends Component {
     tree() {
         return {
@@ -32,13 +49,21 @@ class Block extends Component {
         const props = this._props;
 
         return {
-            type : state.toggle ? 'div' : 'h1',
+            type : 'div',
+            attrs : {
+              href : 'https://example.com',  
+              style : new CSS({
+                    background : state.toggle ? 'green' : 'orange',
+                    'text-decoration' : state.toggle ? 'none' : 'underline',
+                  display : state.toggle ? 'block' : 'inline'
+                })
+            },
             children : {
-                text : props.text,
+                title : props.title,
                 button : new Button({
                     props : {
                         onClick : this.handleClick.bind(this),
-                        title : props.buttonText
+                        title : 'Click me!'
                     }
                 })
             }
@@ -46,19 +71,12 @@ class Block extends Component {
     }
 }
 
-const block = document.createElement('div');
-block.appendChild(document.createTextNode('APP'));
-const link = document.createElement('a');
-link.appendChild(document.createTextNode('Link'));
 
 const app = new Block({
     props : {
-        text : 'Hello world!',
-        buttonText : 'Click me!'
+        title : 'Hello world!',
     },
     hasElement : true
 });
 const root = document.getElementById('root');
-root.appendChild(block);
 root.appendChild(app.getElement());
-root.appendChild(link);
