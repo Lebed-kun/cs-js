@@ -1,7 +1,8 @@
 GOALS:
   1. Create HTML element with attributes, event listeners and child components/texts;
   2. Update HTML element by diffing trees;
-  3. Common store with data shared by different components
+  3. Common store with data shared by different components;
+  4. SSR friendly
   
   TREE:
   1. type - name of HTML element (for simplicity now);

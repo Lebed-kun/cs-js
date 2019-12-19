@@ -56,10 +56,10 @@ class Component {
         }
     }
 
-    _setEventListeners($element, listeners) {
+    _setEventListeners($element, listeners, name = null) {
         for (let key in listeners) {
             const listener = listeners[key];
-            this._setEventListener($element, key, listener);
+            this._setEventListener($element, name || key, listener);
         }
     }
 
@@ -75,10 +75,10 @@ class Component {
         }
     }
 
-    _removeEventListeners($element, listeners) {
+    _removeEventListeners($element, listeners, name = null) {
         for (let key in listeners) {
             const listener = listeners[key];
-            this._removeEventListener($element, key, listener);
+            this._removeEventListener($element, name || key, listener);
         }
     }
 
@@ -139,14 +139,14 @@ class Component {
         }
     }
 
-    _diffEventListeners($element, currListeners, prevListeners) {
+    _diffEventListeners($element, currListeners, prevListeners, name = null) {
         if (currListeners && !prevListeners) {
-            this._setEventListeners($element, currListeners);
+            this._setEventListeners($element, currListeners, name);
             return;
         }
 
         if (!currListeners && prevListeners) {
-            this._removeEventListeners($element, prevListeners);
+            this._removeEventListeners($element, prevListeners, name);
             return;
         }
 
@@ -160,15 +160,37 @@ class Component {
 
                 if (prevListener && currListeners[prevListener] === undefined) {
                     const handler = prevListeners[prevListener];
-                    this._removeEventListener($element, prevListener, handler);
+                    this._removeEventListener($element, name || prevListener, handler);
                 } 
                 
                 if (currListener && prevListeners[currListener] === undefined) {
                     const handler = currListeners[currListener];
-                    this._setEventListener($element, currListener, handler);
+                    this._setEventListener($element, name || currListener, handler);
+                    continue;
+                } else if (!currListener) {
+                    continue;
                 }
+
+                const currType = typeof currListeners[currListener];
+                const prevType = typeof prevListeners[currListener];
+
+                if (currType !== prevType || currType === 'function') {
+                    const prevHandler = prevListeners[currListener];
+                    this._removeEventListener($element, name || currListener, prevHandler);
+
+                    const currHandler = currListeners[currListener];
+                    this._setEventListener($element, name || currListener, currHandler);
+                } else {
+                    const cListeners = currListeners[currListener];
+                    const pListeners = prevListeners[currListener];
+                    this._diffEventListeners($element, cListeners, pListeners, name || currListener);
+                } 
             }
         }
+    }
+
+    _diffEventListener($element, currListener, prevListener) {
+
     }
 
     setState(state) {
