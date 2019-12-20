@@ -71,12 +71,9 @@ class App extends Component {
 
     handleClick() {
         const paragraphs = this._state.paragraphs;
-        const nextNumber = paragraphs.length + 1;
 
         this.setState({
-            paragraphs : [{
-                text : `${nextNumber}th paragraph`
-            }].concat(paragraphs)
+            paragraphs : paragraphs.slice(0, paragraphs.length - 1)
         })
     }
     
@@ -95,7 +92,7 @@ class App extends Component {
                 button : new Button({
                     props : {
                         onClick : this.handleClick.bind(this),
-                        title : 'Add paragraph'
+                        title : 'Delete paragraph'
                     }
                 })
             }

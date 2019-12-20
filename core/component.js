@@ -10,8 +10,21 @@ class TextContent {
     }
 
     _updateElement($parent, currTree, prevTree, index = 0) {
+        const $children = $parent.childNodes;
+        const $element = $children[index];
+        
+        if (!prevTree) {
+            const $newElement = this._createElement();
+            $parent.insertBefore($newElement, $element);
+            return;
+        }
+
+        if (!currTree) {
+            $parent.removeChild($element);
+            return;
+        }
+        
         if (currTree !== prevTree) {
-            const $children = $parent.children;
             const $newElement = this._createElement();
             $parent.replaceChild($newElement, $children[index]); 
         }
@@ -89,7 +102,7 @@ class Component {
     }
 
     _updateElement($parent, currTree, prevTree, index = 0) {
-        const $children = $parent.children;
+        const $children = $parent.childNodes;
         const $element = $children[index];
 
         if (!prevTree) {
@@ -99,7 +112,7 @@ class Component {
         }
 
         if (!currTree) {
-            $parent.removeChild($children[index]);
+            $parent.removeChild($element);
             return;
         }
         
