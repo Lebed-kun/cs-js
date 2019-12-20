@@ -1,6 +1,6 @@
 GOALS:
-  1. Create HTML element with attributes, event listeners and child components/texts;
-  2. Update HTML element by diffing trees;
+  1. Create HTML element with attributes, event listeners and child components/texts; // +++
+  2. Update HTML element by diffing trees; // +++
   3. Common store with data shared by different components;
   4. SSR friendly;
   5. Mounted life-cycle method;
