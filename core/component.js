@@ -101,9 +101,10 @@ class Component {
         }
     }
 
-    _updateElement($parent, currTree, prevTree, index = 0, $prevElement = null) {
+    _updateElement($parent, currTree, prevTree, index = 0, prevIndex = null) {
         const $children = $parent.childNodes;
         const $element = $children[index];
+        const $prevElement = prevIndex ? $children[prevIndex] : null;
 
         if (!prevTree) {
             const $newElement = this._createElement();
@@ -121,13 +122,23 @@ class Component {
             $parent.replaceChild($newElement, $element);
             return;
         } else {
-            this._diffAttributes($prevElement || $element, currTree.attrs, prevTree.attrs);
-            this._diffEventListeners($prevElement || $element, currTree.listeners, prevTree.listeners);
-            this._diffChildren($prevElement || $element, currTree.children, prevTree.children);
+            if ($prevElement) {
+                this._diffAttributes($prevElement, currTree.attrs, prevTree.attrs);
+                this._diffEventListeners($prevElement, currTree.listeners, prevTree.listeners);
+                this._diffChildren($prevElement, currTree.children, prevTree.children);
+            }
+
+            this._diffAttributes($element, currTree.attrs, prevTree.attrs);
+            this._diffEventListeners($element, currTree.listeners, prevTree.listeners);
+            this._diffChildren($element, currTree.children, prevTree.children);
         }
 
         if ($prevElement) {
-            $parent.replaceChild($prevElement, $element);
+            const $prevElementCopy = $prevElement.cloneNode(true);
+            const $elementCopy = $element.cloneNode(true);
+
+            $parent.replaceChild($prevElementCopy, $element);
+            $parent.replaceChild($elementCopy, $prevElement);
         }
     }
 
@@ -142,7 +153,10 @@ class Component {
             if (currKeys[i] !== prevKeys[i] && prevChildren[currKeys[i]]) {
                 const prevComponent = prevChildren[currKeys[i]];
                 const prevTree = prevComponent.tree();
-                currComponent._updateElement($parent, currTree, prevTree, i, prevComponent.$element);
+
+                const j = prevKeys.findIndex(el => el === currKeys[i]);
+
+                currComponent._updateElement($parent, currTree, prevTree, i, j);
             } else {
                 const prevComponent = prevChildren[prevKeys[i]];
                 const prevTree = prevComponent ? prevComponent.tree() : null;
