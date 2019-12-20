@@ -101,7 +101,7 @@ class Component {
         }
     }
 
-    _updateElement($parent, currTree, prevTree, index = 0) {
+    _updateElement($parent, currTree, prevTree, index = 0, $prevElement = null) {
         const $children = $parent.childNodes;
         const $element = $children[index];
 
@@ -119,10 +119,15 @@ class Component {
         if (currTree.type !== prevTree.type) {
             const $newElement = this._createElement();
             $parent.replaceChild($newElement, $element);
+            return;
         } else {
-            this._diffAttributes($element, currTree.attrs, prevTree.attrs);
-            this._diffEventListeners($element, currTree.listeners, prevTree.listeners);
-            this._diffChildren($element, currTree.children, prevTree.children);
+            this._diffAttributes($prevElement || $element, currTree.attrs, prevTree.attrs);
+            this._diffEventListeners($prevElement || $element, currTree.listeners, prevTree.listeners);
+            this._diffChildren($prevElement || $element, currTree.children, prevTree.children);
+        }
+
+        if ($prevElement) {
+            $parent.replaceChild($prevElement, $element);
         }
     }
 
@@ -130,6 +135,29 @@ class Component {
         const currKeys = Object.keys(currChildren);
         const prevKeys = Object.keys(prevChildren);
 
+        for (let i = 0; i < currKeys.length; i++) {
+            const currComponent = currChildren[currKeys[i]];
+            const currTree = currComponent.tree();
+            
+            if (currKeys[i] !== prevKeys[i] && prevChildren[currKeys[i]]) {
+                const prevComponent = prevChildren[currKeys[i]];
+                const prevTree = prevComponent.tree();
+                currComponent._updateElement($parent, currTree, prevTree, i, prevComponent.$element);
+            } else {
+                const prevComponent = prevChildren[prevKeys[i]];
+                const prevTree = prevComponent ? prevComponent.tree() : null;
+                currComponent._updateElement($parent, currTree, prevTree, i);
+            }
+        }
+
+        for (let i = currKeys.length; i < prevKeys.length; i++) {
+            const prevComponent = prevChildren[prevKeys[i]];
+            const prevTree = prevComponent.tree();
+
+            prevComponent._updateElement($parent, null, prevTree, i);
+        }
+
+        /*
         for (let i = 0; i < currKeys.length || i < prevKeys.length; i++) {
             const currComponent = currChildren[currKeys[i]];
             const prevComponent = prevChildren[prevKeys[i]];
@@ -142,7 +170,8 @@ class Component {
             } else {
                 prevComponent._updateElement($parent, currTree, prevTree, i);
             }
-        } 
+        }
+        */
     }
 
     _diffAttributes($element, currAttrs, prevAttrs) {

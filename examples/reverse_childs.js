@@ -1,12 +1,9 @@
-// success ++
+// success +++
 
 class Paragraph extends Component {
     tree() {
         return {
             type : 'p',
-            attrs : {
-                style : `color: ${this._props.color || 'black'};`
-            },
             children : {
                 text : new TextContent(this._props.text)
             }
@@ -14,23 +11,23 @@ class Paragraph extends Component {
     }
 }
 
-class Block extends Component {
-    getParagraphs() {
+class List extends Component {
+    getList() {
         const paragraphs = this._props.paragraphs;
+
         return paragraphs.map(el => {
             return new Paragraph({
                 props : {
-                    color : el.color,
-                    text : el.text
+                    text : el
                 }
             })
         })
-    } 
+    }
     
     tree() {
         return {
             type : 'div',
-            children : this.getParagraphs()
+            children : this.getList()
         }
     }
 }
@@ -50,44 +47,31 @@ class Button extends Component {
 }
 
 class App extends Component {
-    constructor() {
-        super({ state : {
+    constructor({ props, hasElement }) {
+        super({props, hasElement, state : {
             paragraphs : [
-                {
-                    text : '1st paragraph',
-                    color : 'red'
-                },
-                {
-                    text : '2nd paragraph',
-                    color : 'orange'
-                },
-                {
-                    text : '3rd paragraph',
-                    color : 'green'
-                }
+                '1st text',
+                '2nd text',
+                '3rd text'
             ]
-        }, hasElement : true})
+        }});
     }
 
     handleClick() {
         const paragraphs = this._state.paragraphs;
-        const nextNumber = paragraphs.length + 1;
-
         this.setState({
-            paragraphs : [{
-                text : `${nextNumber}th paragraph`
-            }].concat(paragraphs)
+            paragraphs : paragraphs.map((el, id, arr) => arr[arr.length - 1 - id])
         });
     }
-    
+
     tree() {
         return {
             type : 'div',
             attrs : {
-                style : 'border: 2px solid black'
+                style : 'border: 2px solid black;'
             },
             children : {
-                block : new Block({
+                list : new List({
                     props : {
                         paragraphs : this._state.paragraphs
                     }
@@ -95,7 +79,7 @@ class App extends Component {
                 button : new Button({
                     props : {
                         onClick : this.handleClick.bind(this),
-                        title : 'Add paragraph'
+                        title : 'Reverse'
                     }
                 })
             }
@@ -103,7 +87,9 @@ class App extends Component {
     }
 }
 
-const app = new App();
+const app = new App({
+    hasElement : true
+});
 
 const root = document.getElementById('root');
 root.appendChild(app.getElement());
