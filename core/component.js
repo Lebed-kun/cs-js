@@ -9,9 +9,11 @@ class TextContent {
         return $element
     }
 
-    _updateElement(currTree, prevTree) {
+    _updateElement($parent, currTree, prevTree, index = 0) {
         if (currTree !== prevTree) {
-            this.$element = document.createTextNode(currTree);
+            const $children = $parent.children;
+            const $newElement = this._createElement();
+            $parent.replaceChild($newElement, $children[index]); 
         }
     }
 
@@ -86,10 +88,20 @@ class Component {
         }
     }
 
-    // Review of parent
     _updateElement($parent, currTree, prevTree, index = 0) {
         const $children = $parent.children;
         const $element = $children[index];
+
+        if (!prevTree) {
+            const $newElement = this._createElement();
+            $parent.insertBefore($newElement, $element);
+            return;
+        }
+
+        if (!currTree) {
+            $parent.removeChild($children[index]);
+            return;
+        }
         
         if (currTree.type !== prevTree.type) {
             const $newElement = this._createElement();
@@ -97,8 +109,27 @@ class Component {
         } else {
             this._diffAttributes($element, currTree.attrs, prevTree.attrs);
             this._diffEventListeners($element, currTree.listeners, prevTree.listeners);
-            //this._diffChildren(currTree.children, prevTree.children);
+            this._diffChildren($element, currTree.children, prevTree.children);
         }
+    }
+
+    _diffChildren($parent, currChildren, prevChildren) {
+        const currKeys = Object.keys(currChildren);
+        const prevKeys = Object.keys(prevChildren);
+
+        for (let i = 0; i < currKeys.length || i < prevKeys.length; i++) {
+            const currComponent = currChildren[currKeys[i]];
+            const prevComponent = prevChildren[prevKeys[i]];
+
+            const currTree = currComponent ? currComponent.tree() : null;
+            const prevTree = prevComponent ? prevComponent.tree() : null;
+
+            if (currComponent) {
+                currComponent._updateElement($parent, currTree, prevTree, i);
+            } else {
+                prevComponent._updateElement($parent, currTree, prevTree, i);
+            }
+        } 
     }
 
     _diffAttributes($element, currAttrs, prevAttrs) {
