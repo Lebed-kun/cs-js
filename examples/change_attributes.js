@@ -1,4 +1,4 @@
-// success
+// success +++
 
 class CSS {
     constructor(cssProps) {
@@ -25,7 +25,7 @@ class Button extends Component {
                 click : this._props.onClick
             },
             children : {
-                title : this._props.title
+                title : new TextContent(this._props.title)
             }
         }
     }
@@ -59,7 +59,7 @@ class Block extends Component {
                 })
             },
             children : {
-                title : props.title,
+                title : new TextContent(props.title),
                 button : new Button({
                     props : {
                         onClick : this.handleClick.bind(this),

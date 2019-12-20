@@ -1,4 +1,4 @@
-// success
+// success +++
 
 class Button extends Component {
     constructor({ props = {}, hasElement = false }) {
@@ -24,7 +24,7 @@ class Button extends Component {
                 click : !this._state.toggle ? this.handleClick.bind(this) : this.message
             },
             children : {
-                title : this._props.title
+                title : new TextContent(this._props.title)
             }
         }
     }
@@ -41,7 +41,7 @@ class Block extends Component {
               style : 'border: 1px solid black;'
             },
             children : {
-                title : props.title,
+                title : new TextContent(props.title),
                 button : new Button({
                     props : {
                         title : 'Click me!'

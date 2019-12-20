@@ -87,18 +87,17 @@ class Component {
     }
 
     // Review of parent
-    _updateElement(currTree, prevTree) {
-        const $element = this.$element;
+    _updateElement($parent, currTree, prevTree, index = 0) {
+        const $children = $parent.children;
+        const $element = $children[index];
         
         if (currTree.type !== prevTree.type) {
             const $newElement = this._createElement();
-            const $parent = $element.parentNode;
-
             $parent.replaceChild($newElement, $element);
         } else {
             this._diffAttributes($element, currTree.attrs, prevTree.attrs);
             this._diffEventListeners($element, currTree.listeners, prevTree.listeners);
-            this._diffChildren(currTree.children, prevTree.children);
+            //this._diffChildren(currTree.children, prevTree.children);
         }
     }
 
@@ -165,11 +164,13 @@ class Component {
     }
 
     setState(state) {
+        const $parent = this.$element.parentNode;
+
         const prevTree = this.tree();
         this._state = Object.assign({}, this._state, state);
         const currTree = this.tree();
 
-        this._updateElement(currTree, prevTree);
+        this._updateElement($parent, currTree, prevTree);
     }
 
     getElement() {

@@ -1,11 +1,11 @@
-// success
+// success +++ 
 
 class Heading extends Component {
     tree() {
         return {
             type : 'h1',
             children : {
-                text : this._props.text || ''
+                text : new TextContent(this._props.text || '')
             }
         }
     }
@@ -20,7 +20,7 @@ class Link extends Component {
                 href : this._props.url
             },
             children : {
-                title : this._props.title || this._props.url
+                title : new TextContent(this._props.title || this._props.url)
             }
         }
     }

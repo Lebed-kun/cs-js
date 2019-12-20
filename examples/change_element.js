@@ -1,4 +1,4 @@
-// success
+// success +++
 
 class Button extends Component {
     tree() {
@@ -8,7 +8,7 @@ class Button extends Component {
                 click : this._props.onClick
             },
             children : {
-                title : this._props.title
+                title : new TextContent(this._props.title)
             }
         }
     }
@@ -34,7 +34,7 @@ class Block extends Component {
         return {
             type : state.toggle ? 'div' : 'h1',
             children : {
-                text : props.text,
+                text : new TextContent(props.text),
                 button : new Button({
                     props : {
                         onClick : this.handleClick.bind(this),
@@ -46,8 +46,6 @@ class Block extends Component {
     }
 }
 
-const block = document.createElement('div');
-block.appendChild(document.createTextNode('APP'));
 const link = document.createElement('a');
 link.appendChild(document.createTextNode('Link'));
 
@@ -59,6 +57,5 @@ const app = new Block({
     hasElement : true
 });
 const root = document.getElementById('root');
-root.appendChild(block);
 root.appendChild(app.getElement());
 root.appendChild(link);
