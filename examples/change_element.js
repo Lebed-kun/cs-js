@@ -46,6 +46,9 @@ class Block extends Component {
     }
 }
 
+const p = document.createElement('p');
+p.innerHTML = 'Paragraph';
+
 const link = document.createElement('a');
 link.appendChild(document.createTextNode('Link'));
 
@@ -57,5 +60,6 @@ const app = new Block({
     hasElement : true
 });
 const root = document.getElementById('root');
+root.appendChild(p);
 root.appendChild(app.getElement());
 root.appendChild(link);

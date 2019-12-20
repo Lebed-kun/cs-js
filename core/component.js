@@ -103,7 +103,7 @@ class Component {
 
     _updateElement($parent, currTree, prevTree, index = 0, prevIndex = null) {
         const $children = $parent.childNodes;
-        const $element = $children[index];
+        const $element = typeof index === 'number' ? $children[index] : index;
         const $prevElement = prevIndex ? $children[prevIndex] : null;
 
         if (!prevTree) {
@@ -257,7 +257,7 @@ class Component {
         this._state = Object.assign({}, this._state, state);
         const currTree = this.tree();
 
-        this._updateElement($parent, currTree, prevTree);
+        this._updateElement($parent, currTree, prevTree, this.$element);
     }
 
     getElement() {
