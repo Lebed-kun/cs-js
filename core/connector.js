@@ -3,26 +3,30 @@ class Connector {
         this._listeners = {};
     }
 
-    subscribe(event, key, callback) {
+    subscribe(event, key, callback, condition = (props, key) => true) {
         const listeners = this._listeners;
 
-        if (!listeners[event]) listeners[event] = {};
+        if (!listeners[event]) {
+            listeners[event].condition = condition;
+            listeners[event].callbacks = {};
+        }
 
-        listeners[event][key] = callback;
+        listeners[event].callbacks[key] = callback;
     }
 
     unsubscribe(event, key) {
         const listeners = this._listeners;
-        delete listeners[event][key];
+        delete listeners[event].callbacks[key];
     }
 
     dispatch(event, props) {
         const listeners = this._listeners[event];
+        const callbacks = listeners.callbacks;
 
-        for (let lis in listeners) {
-            const callback = listeners[lis];
-
-            callback(props);
+        for (let lis in callbacks) {
+            const condition = listeners.condition(props, lis);
+            const callback = callbacks[lis];
+            if (condition) callback(props, lis);
         }
     }
 }
