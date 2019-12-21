@@ -122,15 +122,9 @@ class Component {
             $parent.replaceChild($newElement, $element);
             return;
         } else {
-            if ($prevElement) {
-                this._diffAttributes($prevElement, currTree.attrs, prevTree.attrs);
-                this._diffEventListeners($prevElement, currTree.listeners, prevTree.listeners);
-                this._diffChildren($prevElement, currTree.children, prevTree.children);
-            }
-
-            this._diffAttributes($element, currTree.attrs, prevTree.attrs);
-            this._diffEventListeners($element, currTree.listeners, prevTree.listeners);
-            this._diffChildren($element, currTree.children, prevTree.children);
+            this._diffAttributes($prevElement || $element, currTree.attrs, prevTree.attrs);
+            this._diffEventListeners($prevElement || $element, currTree.listeners, prevTree.listeners);
+            this._diffChildren($prevElement || $element, currTree.children, prevTree.children);
         }
 
         if ($prevElement) {
