@@ -243,14 +243,15 @@ class Component {
         }
     }
 
-    setProps(props) {
-        const $parent = this.$element.parentNode;
+    setProps(props = {}) {
+        const $element = this.$element;
+        const $parent = $element.parentNode;
 
         const prevTree = this.tree();
         this._props = Object.assign({}, this._props, props);
         const currTree = this.tree();
 
-        this._updateElement($parent, currTree, prevTree, this.$element);
+        this._updateElement($parent, currTree, prevTree, $element);
     }
 
     getElement() {
