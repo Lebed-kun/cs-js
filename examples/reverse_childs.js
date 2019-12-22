@@ -48,18 +48,18 @@ class Button extends Component {
 
 class App extends Component {
     constructor({ props, hasElement }) {
-        super({props, hasElement, state : {
+        super({props : {
             paragraphs : [
                 '1st text',
                 '2nd text',
                 '3rd text'
             ]
-        }});
+        }, hasElement});
     }
 
     handleClick() {
-        const paragraphs = this._state.paragraphs;
-        this.setState({
+        const paragraphs = this._props.paragraphs;
+        this.setProps({
             paragraphs : paragraphs.map((el, id, arr) => arr[arr.length - 1 - id])
         });
     }
@@ -73,7 +73,7 @@ class App extends Component {
             children : {
                 list : new List({
                     props : {
-                        paragraphs : this._state.paragraphs
+                        paragraphs : this._props.paragraphs
                     }
                 }),
                 button : new Button({

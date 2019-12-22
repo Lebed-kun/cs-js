@@ -36,20 +36,20 @@ class Button extends Component {
 
 class App extends Component {
     constructor({ props, hasElement }) {
-        super({props, hasElement, state : {
+        super({props : {
             toggle : false
-        }});
+        }, hasElement});
     }
 
     handleClick() {
-        const toggle = this._state.toggle;
-        this.setState({
-            toggle : !this._state.toggle
+        const toggle = this._props.toggle;
+        this.setProps({
+            toggle : !toggle
         });
     }
 
     getContent() {
-        if (this._state.toggle) {
+        if (this._props.toggle) {
             return {
                 p : new Paragraph({
                     props : {

@@ -33,19 +33,18 @@ class Button extends Component {
 
 class Block extends Component {
     constructor({ props = {}, hasElement = false }) {
-        super({props, state : {
+        super({props : Object.assign({}, props, {
             toggle : false
-        }, hasElement});
+        }), hasElement});
     }
 
     handleClick() {
-        this.setState({
-            toggle : !this._state.toggle
+        this.setProps({
+            toggle : !this._props.toggle
         })
     }
 
     tree() {
-        const state = this._state;
         const props = this._props;
 
         return {
@@ -53,9 +52,9 @@ class Block extends Component {
             attrs : {
               href : 'https://example.com',  
               style : new CSS({
-                    background : state.toggle ? 'green' : 'orange',
-                    'text-decoration' : state.toggle ? 'none' : 'underline',
-                  display : state.toggle ? 'block' : 'inline'
+                    background : props.toggle ? 'green' : 'orange',
+                    'text-decoration' : props.toggle ? 'none' : 'underline',
+                  display : props.toggle ? 'block' : 'inline'
                 })
             },
             children : {

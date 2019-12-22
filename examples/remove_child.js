@@ -51,7 +51,7 @@ class Button extends Component {
 
 class App extends Component {
     constructor() {
-        super({ state : {
+        super({ props : {
             paragraphs : [
                 {
                     text : '1st paragraph',
@@ -70,9 +70,9 @@ class App extends Component {
     }
 
     handleClick() {
-        const paragraphs = this._state.paragraphs;
+        const paragraphs = this._props.paragraphs;
 
-        this.setState({
+        this.setProps({
             paragraphs : paragraphs.slice(0, paragraphs.length - 1)
         })
     }
@@ -86,7 +86,7 @@ class App extends Component {
             children : {
                 block : new Block({
                     props : {
-                        paragraphs : this._state.paragraphs
+                        paragraphs : this._props.paragraphs
                     }
                 }),
                 button : new Button({

@@ -51,7 +51,7 @@ class Button extends Component {
 
 class App extends Component {
     constructor() {
-        super({ state : {
+        super({ props : {
             paragraphs : [
                 {
                     text : '1st paragraph',
@@ -70,10 +70,10 @@ class App extends Component {
     }
 
     handleClick() {
-        const paragraphs = this._state.paragraphs;
+        const paragraphs = this._props.paragraphs;
         const nextNumber = paragraphs.length + 1;
 
-        this.setState({
+        this.setProps({
             paragraphs : [{
                 text : `${nextNumber}th paragraph`
             }].concat(paragraphs)
@@ -89,7 +89,7 @@ class App extends Component {
             children : {
                 block : new Block({
                     props : {
-                        paragraphs : this._state.paragraphs
+                        paragraphs : this._props.paragraphs
                     }
                 }),
                 button : new Button({

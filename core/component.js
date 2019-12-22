@@ -36,9 +36,8 @@ class TextContent {
 }
 
 class Component {
-    constructor({ props = {}, state = {}, hasElement = false }) {
+    constructor({ props = {}, hasElement = false }) {
         this._props = props;
-        this._state = state;
         
         if (hasElement) {
             this._createElement();
@@ -244,11 +243,11 @@ class Component {
         }
     }
 
-    setState(state) {
+    setProps(props) {
         const $parent = this.$element.parentNode;
 
         const prevTree = this.tree();
-        this._state = Object.assign({}, this._state, state);
+        this._props = Object.assign({}, this._props, props);
         const currTree = this.tree();
 
         this._updateElement($parent, currTree, prevTree, this.$element);

@@ -16,23 +16,22 @@ class Button extends Component {
 
 class Block extends Component {
     constructor({ props = {}, hasElement = false }) {
-        super({props, state : {
+        super({props : Object.assign({}, props, {
             toggle : false
-        }, hasElement});
+        }) , hasElement});
     }
 
     handleClick() {
-        this.setState({
-            toggle : !this._state.toggle
+        this.setProps({
+            toggle : !this._props.toggle
         })
     }
 
     tree() {
-        const state = this._state;
         const props = this._props;
 
         return {
-            type : state.toggle ? 'div' : 'h1',
+            type : props.toggle ? 'div' : 'h1',
             children : {
                 text : new TextContent(props.text),
                 button : new Button({

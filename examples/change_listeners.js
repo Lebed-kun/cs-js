@@ -2,14 +2,14 @@
 
 class Button extends Component {
     constructor({ props = {}, hasElement = false }) {
-        super({props, state : {
+        super({props : Object.assign({}, props, {
             toggle : false
-        }, hasElement})
+        }), hasElement})
     }
 
     handleClick() {
-        this.setState({
-            toggle : !this._state.toggle
+        this.setProps({
+            toggle : !this._props.toggle
         })
     }
 
@@ -21,7 +21,7 @@ class Button extends Component {
         return {
             type : 'button',
             listeners : {
-                click : !this._state.toggle ? this.handleClick.bind(this) : this.message
+                click : !this._props.toggle ? this.handleClick.bind(this) : this.message
             },
             children : {
                 title : new TextContent(this._props.title)
@@ -32,7 +32,6 @@ class Button extends Component {
 
 class Block extends Component {
     tree() {
-        const state = this._state;
         const props = this._props;
 
         return {
