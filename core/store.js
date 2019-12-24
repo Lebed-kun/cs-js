@@ -34,9 +34,23 @@ class Store {
     dispatch(event, payload) {
         const listeners = this._listeners[event];
 
+        const oldState = this._state;
+        const newStates = [];
+
         for (let lis in listeners) {
             const callback = listeners[lis];
-            callback(payload);
+            const newState = callback(oldState, payload);
+            newStates.push(newState);
+        }
+
+        this._state = Object.assign.apply(null, [{}, oldState].concat(newStates));
+    }
+
+    getState(prop = '') {
+        if (prop) {
+            return this._state[prop];
+        } else {
+            return this._state;
         }
     }
 }
