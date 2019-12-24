@@ -1,35 +1,42 @@
 class Store {
-    constructor({ initState = {}, eventHandlers }) {
+    constructor(initState = {}) {
         this._state = initState;
-        this._eventHandlers = eventHandlers;
+        this._listeners = {};
     }
 
-    _dispatch({ eventName, payload }) {
-        const handler = this._eventHandlers[eventName];
-        const newState = handler(this._state, payload);
-        this._state = newState;
-    }
-
-    connect(mapStateToProps, mapDispatchToProps) {
-        return Component => {
-            const store = this;
-
-            return class StoreComponent extends Component {
-                constructor({ props = {}, hasElement = false }) {
-                    let newProps = props;
-
-                    if (mapStateToProps) {
-                        newProps = Object.assign({}, newProps, mapStateToProps(store._state));
-                    } 
-
-                    if (mapDispatchToProps) {
-                        const dispatch = store._dispatch.bind(store); 
-                        newProps = Object.assign({}, newProps, mapDispatchToProps(dispatch));
-                    }
-
-                    super({ props : newProps, hasElement })
-                }
+    connect(Component) {
+        const store = this;
+        
+        return class StoreComponent extends Component {
+            constructor({ props = {}, hasElement = false }) {
+                super({ props : Object.assign({}, props, {
+                    store : store
+                }), hasElement })
             }
+        }
+    }
+
+    subscribe(event, key, callback) {
+        const listeners = this._listeners;
+
+        if (!listeners[event]) {
+            listeners[event] = {};
+        }
+
+        listeners[event][key] = callback;
+    }
+
+    unsubscribe(event, key) {
+        const listeners = this._listeners;
+        delete listeners[event][key];
+    }
+
+    dispatch(event, payload) {
+        const listeners = this._listeners[event];
+
+        for (let lis in listeners) {
+            const callback = listeners[lis];
+            callback(payload);
         }
     }
 }
