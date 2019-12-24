@@ -13,6 +13,25 @@ class Store {
                     store : store
                 }), hasElement })
             }
+
+            setProps(props = {}, state = null) {
+                const $element = this.$element;
+                const $parent = $element.parentNode;
+        
+                const prevTree = this.tree();
+
+                if (state) {
+                    store.setState(state);
+                }
+                
+                if (props) {
+                    this._props = Object.assign({}, this._props, props);
+                }
+
+                const currTree = this.tree();
+        
+                this._updateElement($parent, currTree, prevTree, $element);
+            }
         }
     }
 
@@ -34,24 +53,18 @@ class Store {
     dispatch(event, payload) {
         const listeners = this._listeners[event];
 
-        const oldState = this._state;
-        const newStates = [];
-
         for (let lis in listeners) {
             const callback = listeners[lis];
-            const newState = callback(oldState, payload);
-            if (newState) newStates.push(newState);
+            callback(this._state, payload);
         }
-
-        this._state = Object.assign.apply(null, [{}, oldState].concat(newStates));
     }
 
-    getState(prop = '') {
-        if (prop) {
-            return this._state[prop];
-        } else {
-            return this._state;
-        }
+    getState() {
+        return this._state;
+    }
+
+    setState(state) {
+        this._state = state;
     }
 }
 

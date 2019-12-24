@@ -136,6 +136,10 @@ class Component {
     }
 
     _diffChildren($parent, currChildren, prevChildren) {
+        if (!currChildren && !prevChildren) {
+            return;
+        }
+
         const currKeys = Object.keys(currChildren);
         const prevKeys = Object.keys(prevChildren);
 

@@ -1,5 +1,6 @@
 import { Component, TextContent } from '../../core/component.js';
 import store from './store.js';
+import Button from './button.js';
 
 class Heading extends Component {
     tree() {
@@ -16,20 +17,6 @@ class Paragraph extends Component {
     tree() {
         return {
             type : 'p',
-            children : {
-                text : new TextContent(this._props.text)
-            }
-        }
-    }
-}
-
-class Button extends Component {
-    tree() {
-        return {
-            type : 'button',
-            listeners : {
-                click : this._props.onClick
-            },
             children : {
                 text : new TextContent(this._props.text)
             }
@@ -61,7 +48,8 @@ class ToDo extends Component {
                 }}),
                 delete : new Button({
                     props : {
-                        onClick : this.handleClick.bind(this)
+                        onClick : this.handleClick.bind(this),
+                        text : 'Delete'
                     }
                 })
             }
@@ -69,20 +57,28 @@ class ToDo extends Component {
     }
 }
 
+const ToDoConnect = store.connect(ToDo);
+
 class ToDoList extends Component {
     constructor({ props = {}, hasElement }) {
         super({ props, hasElement });
 
         const store = props.store;
+        const component = this;
 
         store.subscribe('new_todo', 'todo_list', (state, payload) => {
-            const newTodo = payload;
-
+            const todos = state.todos;
+            const newId = todos[todos.length - 1].id + 1;
+            
             const newState = Object.assign({}, state, {
-                todos : state.todos.concat([newTodo])
+                todos : todos.concat([{
+                    id : newId,
+                    title : payload.title,
+                    description : payload.description
+                }])
             });
 
-            return newState;
+            component.setProps(null, newState);
         });
 
         store.subscribe('delete_todo', 'todo_list', (state, payload) => {
@@ -92,14 +88,15 @@ class ToDoList extends Component {
                 todos : state.todos.filter(el => el.id !== id)
             });
 
-            return newState;
+            component.setProps(null, newState);
         });
     }
     
-    getContent(state) {
-        const todos = this._props.store.getState('todos');
+    getContent() {
+        const state = this._props.store.getState();
+        const todos = state.todos;
 
-        return todos.map(el => new ToDo({
+        return todos.map(el => new ToDoConnect({
             props : {
                 id : el.id,
                 title : el.title,
