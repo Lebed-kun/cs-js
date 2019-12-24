@@ -40,7 +40,7 @@ class Store {
         for (let lis in listeners) {
             const callback = listeners[lis];
             const newState = callback(oldState, payload);
-            newStates.push(newState);
+            if (newState) newStates.push(newState);
         }
 
         this._state = Object.assign.apply(null, [{}, oldState].concat(newStates));
@@ -54,3 +54,5 @@ class Store {
         }
     }
 }
+
+export default Store;
