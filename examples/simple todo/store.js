@@ -17,7 +17,8 @@ const store = new Store({
             title : 'Jay',
             description : 'No "girlish in guys is a curable sick" conservatives, no "I\'m offended of lacking black muslim transwomen in the scandinavian saga" SJWs'
         }
-    ]
+    ],
+    lastId : 3
 });
 
 export default store;

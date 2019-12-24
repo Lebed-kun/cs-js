@@ -17,6 +17,9 @@ class Paragraph extends Component {
     tree() {
         return {
             type : 'p',
+            attrs : {
+                style : this._props.style || ''
+            },
             children : {
                 text : new TextContent(this._props.text)
             }
@@ -34,6 +37,12 @@ class ToDo extends Component {
     }
     
     tree() {
+        let createdAt = this._props.createdAt;
+        createdAt = new Paragraph({ props : {
+            text : createdAt ? `Created at: ${createdAt}` : '',
+            style : 'font-style: italic'
+        }});
+
         return {
             type : 'div',
             attrs : {
@@ -46,6 +55,7 @@ class ToDo extends Component {
                 description : new Paragraph({ props : {
                     text : this._props.description
                 }}),
+                createdAt : createdAt,
                 delete : new Button({
                     props : {
                         onClick : this.handleClick.bind(this),
@@ -68,14 +78,16 @@ class ToDoList extends Component {
 
         store.subscribe('new_todo', 'todo_list', (state, payload) => {
             const todos = state.todos;
-            const newId = todos[todos.length - 1].id + 1;
+            const newId = state.lastId + 1;
             
             const newState = Object.assign({}, state, {
                 todos : todos.concat([{
                     id : newId,
                     title : payload.title,
-                    description : payload.description
-                }])
+                    description : payload.description,
+                    createdAt : new Date().toLocaleString()
+                }]),
+                lastId : newId
             });
 
             component.setProps(null, newState);
@@ -100,7 +112,8 @@ class ToDoList extends Component {
             props : {
                 id : el.id,
                 title : el.title,
-                description : el.description
+                description : el.description,
+                createdAt : el.createdAt
             }
         }))
     }
@@ -108,9 +121,7 @@ class ToDoList extends Component {
     tree() {
         return {
             type : 'div',
-            children : {
-                todos : this.getContent()
-            }
+            children : this.getContent()
         }
     }
 }

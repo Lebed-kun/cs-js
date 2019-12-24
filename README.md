@@ -1,7 +1,7 @@
 GOALS:
   1. Create HTML element with attributes, event listeners and child components/texts; // +++
   2. Update HTML element by diffing trees; // +++
-  3. Connector that's able to share data between non-directly related entities;
+  3. Store with state and dispatching events; // +++
   4. SSR friendly;
   5. Mounted life-cycle method;
   6. Updated life-cycle method

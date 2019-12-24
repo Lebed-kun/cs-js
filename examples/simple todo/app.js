@@ -12,8 +12,8 @@ class App extends Component {
         return {
             type : 'div',
             children : {
-                todos : new ToDoList(),
-                form : new Form()
+                todos : new ToDoList({}),
+                form : new Form({})
             }
         }
     }
