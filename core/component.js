@@ -33,6 +33,10 @@ class TextContent {
     tree() {
         return this._text;
     }
+
+    template() {
+        return this._text;
+    }
 }
 
 class Component {
@@ -45,7 +49,8 @@ class Component {
     }
 
     _createElement() {
-        const tree = this.tree();
+        const component = this.toComponent ? this.toComponent() : this;
+        const tree = component.tree();
         const $element = document.createElement(tree.type);
 
         this._setAttributes($element, tree.attrs);
@@ -56,10 +61,7 @@ class Component {
             const child = children[key];
             let $child = null;
 
-            if (child && child.toComponent) {
-                const childComponent = child.toComponent();
-                $child = childComponent._createElement();
-            } else if (child instanceof Component || child instanceof TextContent) {    
+            if (child instanceof Component || child instanceof TextContent) {    
                 $child = child._createElement();
             }
 
@@ -247,6 +249,17 @@ class Component {
         }
     }
 
+    _prepareAttributes(attrs) {
+        let result = ''
+        
+        for (let key in attrs) {
+            const value = attrs[key].toString();
+            result += `${key}="${value}" `
+        }
+
+        return result;
+    }
+
     setProps(props = {}) {
         const $element = this.$element;
         const $parent = $element.parentNode;
@@ -269,6 +282,24 @@ class Component {
             listeners : {}, // event listeners
             children : {} // another components and texts
         }
+    }
+
+    template() {
+        const tree = this.tree();
+
+        let html = `<${tree.type} `;
+        html += `${this._prepareAttributes(tree.attrs)}>`;
+
+        const children = tree.children;
+        for (let ch in children) {
+            if (children[ch] instanceof Component || children[ch] instanceof TextContent) {
+                html += children[ch].template();
+            }
+        }
+
+        html += `</${tree.type}>`;
+
+        return html;
     }
 }
 

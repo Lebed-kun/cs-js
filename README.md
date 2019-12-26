@@ -20,5 +20,7 @@ GOALS:
   5. And diff children. Update each child recursively;
   6. If there's specified element (by key) then swap it with previous element
 
-  REQUIREMENTS OF STORE:
+  SSR:
+  1. Render component as HTML-string;
+  2. Hydrate component into HTML-template attaching listeners;
  
