@@ -51,13 +51,13 @@ class TextContent {
 }
 
 class Component {
-    constructor({ props = {}, hasElement = false, template = null }) {
+    constructor({ props = {}, root = null, template = null }) {
         this._props = props;
 
         if (template) {
             this._hydrateElement(template);
-        } else if (hasElement) {
-            this._createElement();
+        } else if (root) {
+            this._createElement(root);
         }
     }
 
@@ -93,7 +93,7 @@ class Component {
         }
     }
 
-    _createElement() {
+    _createElement($root = null) {
         const component = this.toComponent ? this.toComponent() : this;
         const tree = component.tree();
         const $element = document.createElement(tree.type);
@@ -116,6 +116,10 @@ class Component {
         }
 
         this.$element = $element;
+
+        if ($root) {
+            $root.appendChild($element);
+        }
       
         return $element;
     }
