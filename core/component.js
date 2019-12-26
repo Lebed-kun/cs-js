@@ -75,8 +75,10 @@ class Component {
 
             this._setEventListeners($element, tree.listeners);
 
-            const $domChilds = $element.childNodes;
             const children = tree.children;
+            if (!children) return;
+
+            const $domChilds = $element.childNodes;
             
             for (let i = 0; i < children.length; i++) {
                 if (!$domChilds[i]) {
