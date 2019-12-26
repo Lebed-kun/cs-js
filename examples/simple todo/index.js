@@ -1,6 +1,5 @@
-import App from './app.js';
+import App from "./src/examples/simple todo/app.js";
 
-const app = new App();
-
-const root = document.getElementById('root');
-root.appendChild(app.getElement());
+const app = new App({
+  root: document.getElementById("root")
+});
