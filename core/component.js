@@ -5,8 +5,10 @@ class TextContent {
 
     _hydrateElement($text) {
         if ($text.textContent !== this._text) {
-            const $element = document.createTextNode(this._text);
-            this.$element = $element;
+            const $parent = $text.parentNode;
+            const $element = this._createElement();
+            
+            $parent.replaceChild($element, $text);
         } else {
             this.$element = $text;
         }
