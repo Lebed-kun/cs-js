@@ -3,6 +3,15 @@ class TextContent {
         this._text = text;
     }
 
+    _hydrateElement($text) {
+        if ($text.textContent !== this._text) {
+            const $element = document.createTextNode(this._text);
+            this.$element = $element;
+        } else {
+            this.$element = $text;
+        }
+    }
+
     _createElement() {
         const $element = document.createTextNode(this._text);
         this.$element = $element;
@@ -40,11 +49,43 @@ class TextContent {
 }
 
 class Component {
-    constructor({ props = {}, hasElement = false }) {
+    constructor({ props = {}, hasElement = false, template = null }) {
         this._props = props;
-        
-        if (hasElement) {
+
+        if (template) {
+            this._hydrateElement(template);
+        } else if (hasElement) {
             this._createElement();
+        }
+    }
+
+    _hydrateElement($template) {
+        const component = this.toComponent ? this.toComponent() : this;
+        const tree = component.tree();
+
+        const $tag = $template.tagName.toLowerCase();
+        
+        if ($tag !== tree.type) {
+            const $parent = $template.parentNode;
+            const $newElement = this._createElement();
+            $parent.replaceChild($newElement, $template);
+        } else {
+            const $element = $template;
+            this.$element = $element;
+
+            this._setEventListeners($element, tree.listeners);
+
+            const $domChilds = $element.childNodes;
+            const children = tree.children;
+            
+            for (let i = 0; i < children.length; i++) {
+                if (!$domChilds[i]) {
+                    const $newElement = children[i]._createElement();
+                    $element.insertBefore($newElement, $domChilds[i]);
+                } else {
+                    children[i]._hydrateElement($domChilds[i]);
+                }
+            }
         }
     }
 
