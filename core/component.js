@@ -146,25 +146,35 @@ class Component {
         const prevKeys = Object.keys(prevChildren);
 
         for (let i = 0; i < currKeys.length; i++) {
-            const currComponent = currChildren[currKeys[i]];
+            let currComponent = currChildren[currKeys[i]];
+            currComponent = currComponent.toComponent ? currComponent.toComponent() : currComponent;
+
             const currTree = currComponent.tree();
             
             if (currKeys[i] !== prevKeys[i] && prevChildren[currKeys[i]]) {
-                const prevComponent = prevChildren[currKeys[i]];
+                let prevComponent = prevChildren[currKeys[i]];
+                prevComponent = prevComponent.toComponent ? prevComponent.toComponent() : prevComponent;
+
                 const prevTree = prevComponent.tree();
 
                 const j = prevKeys.findIndex(el => el === currKeys[i]);
 
                 currComponent._updateElement($parent, currTree, prevTree, i, j);
             } else {
-                const prevComponent = prevChildren[prevKeys[i]];
+                let prevComponent = prevChildren[prevKeys[i]];
+                if (prevComponent) {
+                    prevComponent = prevComponent.toComponent ? prevComponent.toComponent() : prevComponent;
+                }
+                
                 const prevTree = prevComponent ? prevComponent.tree() : null;
                 currComponent._updateElement($parent, currTree, prevTree, i);
             }
         }
 
         for (let i = currKeys.length; i < prevKeys.length; i++) {
-            const prevComponent = prevChildren[prevKeys[i]];
+            let prevComponent = prevChildren[prevKeys[i]];
+            prevComponent = prevComponent.toComponent ? prevComponent.toComponent() : prevComponent;
+
             const prevTree = prevComponent.tree();
 
             prevComponent._updateElement($parent, null, prevTree, i);
