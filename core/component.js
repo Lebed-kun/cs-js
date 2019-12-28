@@ -4,14 +4,7 @@ class TextContent {
     }
 
     _hydrateElement($text) {
-        if ($text.textContent !== this._text) {
-            const $parent = $text.parentNode;
-            const $element = this._createElement();
-            
-            $parent.replaceChild($element, $text);
-        } else {
-            this.$element = $text;
-        }
+        this.$element = $text;
     }
 
     _createElement() {
@@ -323,9 +316,13 @@ class Component {
         const $element = this.$element;
         const $parent = $element.parentNode;
 
-        const prevTree = this.tree();
+        let component = this.toComponent ? this.toComponent() : this;
+        const prevTree = component.tree();
+
         this._props = Object.assign({}, this._props, props);
-        const currTree = this.tree();
+
+        component = this.toComponent ? this.toComponent() : this;
+        const currTree = component.tree();
 
         this._updateElement($parent, currTree, prevTree, $element);
     }
@@ -344,7 +341,8 @@ class Component {
     }
 
     template() {
-        const tree = this.tree();
+        const component = this.toComponent ? this.toComponent() : this;
+        const tree = component.tree();
 
         let html = `<${tree.type} `;
         html += `${this._prepareAttributes(tree.attrs)}>`;

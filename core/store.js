@@ -8,17 +8,18 @@ class Store {
         const store = this;
         
         return class StoreComponent extends Component {
-            constructor({ props = {}, hasElement = false }) {
+            constructor({ props = {}, root = null, template = null }) {
                 super({ props : Object.assign({}, props, {
                     store : store
-                }), hasElement })
+                }), root, template })
             }
 
             setProps(props = {}, state = null) {
                 const $element = this.$element;
                 const $parent = $element.parentNode;
-        
-                const prevTree = this.tree();
+
+                let component = this.toComponent ? this.toComponent() : this;
+                const prevTree = component.tree();
 
                 if (state) {
                     store.setState(state);
@@ -28,7 +29,8 @@ class Store {
                     this._props = Object.assign({}, this._props, props);
                 }
 
-                const currTree = this.tree();
+                component = this.toComponent ? this.toComponent() : this;
+                const currTree = component.tree();
         
                 this._updateElement($parent, currTree, prevTree, $element);
             }
