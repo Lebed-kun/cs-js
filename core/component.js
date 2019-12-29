@@ -52,6 +52,10 @@ class Component {
         } else if (root) {
             this._createElement(root);
         }
+
+        if (this.mounted) {
+            this.mounted();
+        }
     }
 
     _hydrateElement($template) {
@@ -319,12 +323,17 @@ class Component {
         let component = this.toComponent ? this.toComponent() : this;
         const prevTree = component.tree();
 
+        const prevProps = this._props;
         this._props = Object.assign({}, this._props, props);
 
         component = this.toComponent ? this.toComponent() : this;
         const currTree = component.tree();
 
         this._updateElement($parent, currTree, prevTree, $element);
+
+        if (this.updated) {
+            this.updated(prevProps);
+        }
     }
 
     getElement() {
