@@ -33,6 +33,10 @@ class Store {
                 const currTree = component.tree();
         
                 this._updateElement($parent, currTree, prevTree, $element);
+
+                if (this.updated) {
+                    this.updated(prevProps);
+                }
             }
         }
     }
