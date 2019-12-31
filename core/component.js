@@ -62,30 +62,21 @@ class Component {
         const component = this.toComponent ? this.toComponent() : this;
         const tree = component.tree();
 
-        const $tag = $template.tagName.toLowerCase();
-        
-        if ($tag !== tree.type) {
-            const $parent = $template.parentNode;
-            const $newElement = this._createElement();
-            $parent.replaceChild($newElement, $template);
-        } else {
-            const $element = $template;
-            this.$element = $element;
+        this.$element = $template;
 
-            this._setEventListeners($element, tree.listeners);
+        this._setEventListeners($template, tree.listeners);
 
-            const children = tree.children;
-            if (!children) return;
+        const children = tree.children;
+        if (!children) return;
 
-            const $domChilds = $element.childNodes;
+        const $domChilds = $template.childNodes;
             
-            for (let i = 0; i < children.length; i++) {
-                if (!$domChilds[i]) {
-                    const $newElement = children[i]._createElement();
-                    $element.insertBefore($newElement, $domChilds[i]);
-                } else {
-                    children[i]._hydrateElement($domChilds[i]);
-                }
+        for (let i = 0; i < children.length; i++) {
+            if (!$domChilds[i]) {
+                const $newElement = children[i]._createElement();
+                $template.insertBefore($newElement, $domChilds[i]);
+            } else {
+                children[i]._hydrateElement($domChilds[i]);
             }
         }
     }
