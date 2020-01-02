@@ -15,6 +15,7 @@ class Input extends Component {
       type: "input",
       attrs: {
         name: this._props.name,
+        value: this._props.value || "",
         placeholder: this._props.placeholder
       },
       listeners: {
@@ -34,6 +35,9 @@ class TextArea extends Input {
       },
       listeners: {
         change: this.handleChange.bind(this)
+      },
+      children: {
+        text: new TextContent(this._props.value || "")
       }
     };
   }
@@ -44,8 +48,8 @@ class Form extends Component {
     super({ props, root, template });
 
     this.form = {
-      title: "",
-      description: "",
+      title: props.title || "",
+      description: props.description || "",
       setValue: function(key, value) {
         this[key] = value;
       }
@@ -57,10 +61,18 @@ class Form extends Component {
 
     const store = this._props.store;
 
-    store.dispatch("new_todo", {
-      title: this.form.title,
-      description: this.form.description
-    });
+    if (this._props.id) {
+      store.dispatch("edit_todo", {
+        id: this._props.id,
+        title: this.form.title,
+        description: this.form.description
+      });
+    } else {
+      store.dispatch("new_todo", {
+        title: this.form.title,
+        description: this.form.description
+      });
+    }
   }
 
   tree() {
@@ -77,20 +89,22 @@ class Form extends Component {
           props: {
             form: this.form,
             name: "title",
-            placeholder: "Title"
+            placeholder: "Title",
+            value: this.form.title
           }
         }),
         description: new TextArea({
           props: {
             form: this.form,
             name: "description",
-            placeholder: "Task description"
+            placeholder: "Task description",
+            value: this.form.description
           }
         }),
         button: new Button({
           props: {
             type: "submit",
-            text: "Create"
+            text: this._props.id ? "Save" : "Create"
           }
         })
       }

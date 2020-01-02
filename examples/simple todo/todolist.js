@@ -1,6 +1,7 @@
 import { Component, TextContent } from "../../core/component.js";
 import store from "./store.js";
 import Button from "./button.js";
+import Form from "./form.js";
 
 class Heading extends Component {
   tree() {
@@ -56,6 +57,18 @@ class ToDo extends Component {
     return date;
   }
 
+  getForm() {
+    return {
+      form: new Form({
+        props: {
+          id: this._props.id,
+          title: this._props.title,
+          description: this._props.description
+        }
+      })
+    };
+  }
+
   getCard() {
     const createdAt = this.getDate("created");
     const updatedAt = this.getDate("updated");
@@ -94,7 +107,7 @@ class ToDo extends Component {
       attrs: {
         style: "border: 2px solid black;"
       },
-      children: this._props.form ? {} : this.getCard()
+      children: this._props.form ? this.getForm() : this.getCard()
     };
   }
 }
@@ -107,7 +120,9 @@ class ToDoList extends Component {
 
     this.setAddToDo();
     this.setDeleteToDo();
+
     this.setOpenEdit();
+    this.setEditToDo();
   }
 
   setOpenEdit() {
@@ -121,6 +136,31 @@ class ToDoList extends Component {
         const newTodos = todos.slice();
         newTodos[todoId] = Object.assign({}, newTodos[todoId], {
           form: true
+        });
+
+        const newState = Object.assign({}, state, {
+          todos: newTodos
+        });
+
+        this.setProps(null, newState);
+      }
+    });
+  }
+
+  setEditToDo() {
+    const store = this._props.store;
+
+    store.subscribe("edit_todo", "todo_list", (state, payload) => {
+      const todos = state.todos;
+      const todoId = todos.findIndex(el => el.id === payload.id);
+
+      if (todoId >= 0) {
+        const newTodos = todos.slice();
+        newTodos[todoId] = Object.assign({}, newTodos[todoId], {
+          form: false,
+          title: payload.title,
+          description: payload.description,
+          updatedAt: new Date().toLocaleString()
         });
 
         const newState = Object.assign({}, state, {
@@ -181,7 +221,8 @@ class ToDoList extends Component {
             id: el.id,
             title: el.title,
             description: el.description,
-            createdAt: el.createdAt
+            createdAt: el.createdAt,
+            updatedAt: el.updatedAt
           }
         })
     );
