@@ -208,13 +208,14 @@ class Component {
             }
         }
 
-        for (let i = currKeys.length; i < prevKeys.length; i++) {
+        const k = currKeys.length;
+        for (let i = k; i < prevKeys.length; i++) {
             let prevComponent = prevChildren[prevKeys[i]];
             prevComponent = prevComponent.toComponent ? prevComponent.toComponent() : prevComponent;
 
             const prevTree = prevComponent.tree();
 
-            prevComponent._updateElement($parent, null, prevTree, i);
+            prevComponent._updateElement($parent, null, prevTree, k);
         }
 
         /*

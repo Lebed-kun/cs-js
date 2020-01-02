@@ -1,129 +1,198 @@
-import { Component, TextContent } from '../../core/component.js';
-import store from './store.js';
-import Button from './button.js';
+import { Component, TextContent } from "../../core/component.js";
+import store from "./store.js";
+import Button from "./button.js";
 
 class Heading extends Component {
-    tree() {
-        return {
-            type : 'h3',
-            children : {
-                text : new TextContent(this._props.text)
-            }
-        }
-    }
+  tree() {
+    return {
+      type: "h3",
+      children: {
+        text: new TextContent(this._props.text)
+      }
+    };
+  }
 }
 
 class Paragraph extends Component {
-    tree() {
-        return {
-            type : 'p',
-            attrs : {
-                style : this._props.style || ''
-            },
-            children : {
-                text : new TextContent(this._props.text)
-            }
-        }
-    }
+  tree() {
+    return {
+      type: "p",
+      attrs: {
+        style: this._props.style || ""
+      },
+      children: {
+        text: new TextContent(this._props.text)
+      }
+    };
+  }
 }
 
 class ToDo extends Component {
-    handleClick() {
-        const store = this._props.store;
+  edit() {
+    const store = this._props.store;
 
-        store.dispatch('delete_todo', {
-            id : this._props.id
-        })
-    }
-    
-    tree() {
-        let createdAt = this._props.createdAt;
-        createdAt = new Paragraph({ props : {
-            text : createdAt ? `Created at: ${createdAt}` : '',
-            style : 'font-style: italic'
-        }});
+    store.dispatch("open_edit", {
+      id: this._props.id
+    });
+  }
 
-        return {
-            type : 'div',
-            attrs : {
-                style : 'border: 2px solid black;'
-            },
-            children : {
-                heading : new Heading({ props : {
-                    text : this._props.title
-                }}),
-                description : new Paragraph({ props : {
-                    text : this._props.description
-                }}),
-                createdAt : createdAt,
-                delete : new Button({
-                    props : {
-                        onClick : this.handleClick.bind(this),
-                        text : 'Delete'
-                    }
-                })
-            }
+  delete() {
+    const store = this._props.store;
+
+    store.dispatch("delete_todo", {
+      id: this._props.id
+    });
+  }
+
+  getDate(prop) {
+    let date = this._props[`${prop}At`];
+    date = new Paragraph({
+      props: {
+        text: date ? `${prop} at: ${date}` : "",
+        style: "font-style: italic"
+      }
+    });
+
+    return date;
+  }
+
+  getCard() {
+    const createdAt = this.getDate("created");
+    const updatedAt = this.getDate("updated");
+
+    return {
+      heading: new Heading({
+        props: {
+          text: this._props.title
         }
-    }
+      }),
+      description: new Paragraph({
+        props: {
+          text: this._props.description
+        }
+      }),
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      edit: new Button({
+        props: {
+          onClick: this.edit.bind(this),
+          text: "Edit"
+        }
+      }),
+      delete: new Button({
+        props: {
+          onClick: this.delete.bind(this),
+          text: "Delete"
+        }
+      })
+    };
+  }
+
+  tree() {
+    return {
+      type: "div",
+      attrs: {
+        style: "border: 2px solid black;"
+      },
+      children: this._props.form ? {} : this.getCard()
+    };
+  }
 }
 
 const ToDoConnect = store.connect(ToDo);
 
 class ToDoList extends Component {
-    constructor({ props = {}, hasElement }) {
-        super({ props, hasElement });
+  constructor({ props = {}, hasElement }) {
+    super({ props, hasElement });
 
-        const store = props.store;
-        const component = this;
+    this.setAddToDo();
+    this.setDeleteToDo();
+    this.setOpenEdit();
+  }
 
-        store.subscribe('new_todo', 'todo_list', (state, payload) => {
-            const todos = state.todos;
-            const newId = state.lastId + 1;
-            
-            const newState = Object.assign({}, state, {
-                todos : todos.concat([{
-                    id : newId,
-                    title : payload.title,
-                    description : payload.description,
-                    createdAt : new Date().toLocaleString()
-                }]),
-                lastId : newId
-            });
+  setOpenEdit() {
+    const store = this._props.store;
 
-            component.setProps(null, newState);
+    store.subscribe("open_edit", "todo_list", (state, payload) => {
+      const todos = state.todos;
+      const todoId = todos.findIndex(el => el.id === payload.id);
+
+      if (todoId >= 0) {
+        const newTodos = todos.slice();
+        newTodos[todoId] = Object.assign({}, newTodos[todoId], {
+          form: true
         });
 
-        store.subscribe('delete_todo', 'todo_list', (state, payload) => {
-            const id = payload.id;
-
-            const newState = Object.assign({}, state, {
-                todos : state.todos.filter(el => el.id !== id)
-            });
-
-            component.setProps(null, newState);
+        const newState = Object.assign({}, state, {
+          todos: newTodos
         });
-    }
-    
-    getContent() {
-        const state = this._props.store.getState();
-        const todos = state.todos;
 
-        return todos.map(el => new ToDoConnect({
-            props : {
-                id : el.id,
-                title : el.title,
-                description : el.description,
-                createdAt : el.createdAt
-            }
-        }))
-    }
-    
-    tree() {
-        return {
-            type : 'div',
-            children : this.getContent()
-        }
-    }
+        this.setProps(null, newState);
+      }
+    });
+  }
+
+  setAddToDo() {
+    const store = this._props.store;
+
+    store.subscribe("new_todo", "todo_list", (state, payload) => {
+      const todos = state.todos;
+      const newId = state.lastId + 1;
+
+      const newState = Object.assign({}, state, {
+        todos: todos.concat([
+          {
+            id: newId,
+            title: payload.title,
+            description: payload.description,
+            createdAt: new Date().toLocaleString()
+          }
+        ]),
+        lastId: newId
+      });
+
+      this.setProps(null, newState);
+    });
+  }
+
+  setDeleteToDo() {
+    const store = this._props.store;
+
+    store.subscribe("delete_todo", "todo_list", (state, payload) => {
+      const id = payload.id;
+
+      const newState = Object.assign({}, state, {
+        todos: state.todos.filter(el => el.id !== id)
+      });
+
+      this.setProps(null, newState);
+    });
+  }
+
+  getContent() {
+    const state = this._props.store.getState();
+    const todos = state.todos;
+
+    return todos.map(
+      el =>
+        new ToDoConnect({
+          props: {
+            form: el.form,
+            id: el.id,
+            title: el.title,
+            description: el.description,
+            createdAt: el.createdAt
+          }
+        })
+    );
+  }
+
+  tree() {
+    return {
+      type: "div",
+      children: this.getContent()
+    };
+  }
 }
 
 const ToDoListConnect = store.connect(ToDoList);
