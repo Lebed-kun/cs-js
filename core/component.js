@@ -17,13 +17,13 @@ class TextContent {
         const $children = $parent.childNodes;
         const $element = $children[index];
         
-        if (!prevTree) {
+        if (prevTree === undefined || prevTree === null) {
             const $newElement = this._createElement();
             $parent.insertBefore($newElement, $element);
             return;
         }
 
-        if (!currTree) {
+        if (currTree === undefined || prevTree === null) {
             $parent.removeChild($element);
             return;
         }
