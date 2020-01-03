@@ -5,7 +5,7 @@ GOALS:
   4. SSR friendly; // +++
   5. Mounted life-cycle method; // +++
   6. Updated life-cycle method // +++
-  7. Unmounted life-cycle method
+  7. Unmounted life-cycle method // +++
   8. HTML components;
   
   TREE:
