@@ -53,7 +53,11 @@ class Component {
             this._createElement(root);
         }
 
-        if (this.mounted) {
+        if (typeof window !== 'undefined' && this.unmounted) {
+            window.addEventListener('beforeunload', this.unmounted.bind(this));
+        }
+
+        if (typeof window !== 'undefined' && this.mounted) {
             this.mounted();
         }
     }
@@ -152,6 +156,7 @@ class Component {
 
         if (!currTree) {
             $parent.removeChild($element);
+            if (this.unmounted) this.unmounted();
             return;
         }
         
@@ -217,22 +222,6 @@ class Component {
 
             prevComponent._updateElement($parent, null, prevTree, k);
         }
-
-        /*
-        for (let i = 0; i < currKeys.length || i < prevKeys.length; i++) {
-            const currComponent = currChildren[currKeys[i]];
-            const prevComponent = prevChildren[prevKeys[i]];
-
-            const currTree = currComponent ? currComponent.tree() : null;
-            const prevTree = prevComponent ? prevComponent.tree() : null;
-
-            if (currComponent) {
-                currComponent._updateElement($parent, currTree, prevTree, i);
-            } else {
-                prevComponent._updateElement($parent, currTree, prevTree, i);
-            }
-        }
-        */
     }
 
     _diffAttributes($element, currAttrs, prevAttrs) {

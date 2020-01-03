@@ -3,8 +3,9 @@ GOALS:
   2. Update HTML element by diffing trees; // +++
   3. Store with state and dispatching events; // +++
   4. SSR friendly; // +++
-  5. Mounted life-cycle method;
-  6. Updated life-cycle method
+  5. Mounted life-cycle method; // +++
+  6. Updated life-cycle method // +++
+  7. Unmounted life-cycle method
   
   TREE:
   1. type - name of HTML element (for simplicity now);
@@ -24,3 +25,6 @@ GOALS:
   1. Render component as HTML-string;
   2. Hydrate component into HTML-template attaching listeners;
  
+  Unmounted lify-cycle method is called when:
+  1. Page destructs (tab closed, reloaded, returned to previous page);
+  2. Element of component is removed from DOM
