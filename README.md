@@ -7,7 +7,7 @@ GOALS:
   6. Updated life-cycle method // +++
   7. Unmounted life-cycle method // +++
   8. HTML components; // +++
-  9. Frontend router;
+  9. Frontend router; // +++
   
   TREE:
   1. type - name of HTML element (for simplicity now);

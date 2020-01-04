@@ -3,8 +3,9 @@ class Router {
         this._routes = [];
     }
 
-    handleRoute({ pattern = '', handle }) {
+    handleRoute({ exact = false, pattern = '', handle }) {
         this._routes.push({
+            exact : exact,
             pattern : pattern,
             handle : handle
         })
@@ -16,18 +17,18 @@ class Router {
         if (!url && typeof window !== 'undefined') url = window.location.pathname;
         if (!url || !pattern) return result;
 
-        const urlPath = url.split('?')[0];
+        let urlPath = url.split('?')[0];
         urlPath = urlPath.split('/');
 
         pattern = pattern.split('/');
 
         for (let i = 0; i < pattern.length; i++) {
-            if (pattern[i] && pattern[i] === '*') continue;
+            if (pattern[i] === '*') continue;
 
             if (pattern[i] && pattern[i][0] === ':') {
                 const key = pattern[i].slice(1);
                 result[key] = urlPath[i];
-            } else if (pattern[i] && pattern[i] !== urlPath[i]) {
+            } else if (pattern[i] !== urlPath[i]) {
                 return null;
             }
         }
@@ -67,8 +68,10 @@ class Router {
     }
 
     execute({ params = {}, url = '' }) {
-        this._routes.forEach(route => {
-            const { pattern, handle } = route;
+        const routes = this._routes;
+
+        for (let i = 0; i < routes.length; i++) {
+            const { exact, pattern, handle } = routes[i];
             
             const urlParams = this._getUrlParams({ url, pattern });
             
@@ -82,9 +85,11 @@ class Router {
                         query : queryParams,
                         router : this
                     }, params)
-                })
+                });
+
+                if (exact) break;
             }
-        })
+        }
     }
 
     redirect(url) {
