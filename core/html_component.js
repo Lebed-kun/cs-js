@@ -2,19 +2,21 @@ import { Component } from './component.js';
 
 class HTMLComponent extends Component {
     constructor({ tag = '', props = {}, children = {}, root = null, template = null }) {
-        super({ props : Object.assign({}, props, {
+        const { attrs, listeners } = this._getHTMLAttrsListeners(props);
+        
+        super({ props : {
             tag : tag,
+            attrs : attrs,
+            listeners : listeners,
             children : children
-        }), root, template });
+        }, root, template });
     }
 
-    _getHTMLAttrsListeners() {
+    _getHTMLAttrsListeners(props) {
         const parttree = {
             attrs : {},
             listeners : {}
         }
-
-        const props = this._props;
 
         for (let key in props) {
             const prop = props[key];
@@ -32,7 +34,8 @@ class HTMLComponent extends Component {
     tree() {
         return {
             type : this._props.tag,
-            ...this._getHTMLAttrsListeners(),
+            attrs : this._props.attrs,
+            listeners : this._props.listeners,
             children : this._props.children
         }
     }
