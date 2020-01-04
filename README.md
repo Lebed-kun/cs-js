@@ -6,7 +6,8 @@ GOALS:
   5. Mounted life-cycle method; // +++
   6. Updated life-cycle method // +++
   7. Unmounted life-cycle method // +++
-  8. HTML components;
+  8. HTML components; // +++
+  9. Frontend router;
   
   TREE:
   1. type - name of HTML element (for simplicity now);
@@ -29,3 +30,8 @@ GOALS:
   Unmounted lify-cycle method is called when:
   1. Page destructs (tab closed, reloaded, returned to previous page);
   2. Element of component is removed from DOM
+
+  Frontend router:
+  1. Component can be executed with additional props, root/template;
+  2. If link pattern is not specified then component executes;
+  3. If link pattern is specified and browser pathname matches the pattern then component executes with path and query params;
