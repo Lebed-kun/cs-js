@@ -14,7 +14,7 @@ class DynamicPage extends Component {
         return new HTMLComponent({
             tag : 'div',
             attrs : {
-                style : 'border: 2px solid pink;'
+                style : `border: 2px solid ${this._props.color || 'pink'};`
             },
             children : [
                 new HTMLComponent({
@@ -27,6 +27,15 @@ class DynamicPage extends Component {
                         style : 'border-top: 1px solid gray;'
                     },
                     children : [new TextContent(q || '')] 
+                }),
+                new HTMLComponent({
+                    tag : 'button',
+                    listeners : {
+                        click : () => this.setProps({
+                            color : 'grey'
+                        })
+                    },
+                    children : [new TextContent('Click')]
                 })
             ]
         })
